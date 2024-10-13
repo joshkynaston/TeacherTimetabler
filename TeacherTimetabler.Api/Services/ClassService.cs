@@ -1,12 +1,14 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
 using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Services;
 
-public class ClassService(AppDbContext dbCtx)
+public class ClassService(AppDbContext dbCtx, IMapper mapper)
 {
     private readonly AppDbContext _dbCtx = dbCtx;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<ClassDTO?> GetClassByIdAsync(string userId, int entityId)
     {
@@ -20,12 +22,7 @@ public class ClassService(AppDbContext dbCtx)
         }
         else
         {
-            return new ClassDTO
-            {
-                Id = classEntity.Id,
-                Name = classEntity.Name,
-                Subject = classEntity.Subject,
-            };
+            return _mapper.Map<ClassDTO>(classEntity);
         }
     }
 
@@ -33,12 +30,7 @@ public class ClassService(AppDbContext dbCtx)
     {
         List<ClassDTO> classEntities = await _dbCtx
             .Classes.Where(c => c.UserEntityId == userId)
-            .Select(c => new ClassDTO
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Subject = c.Subject,
-            })
+            .Select(c => _mapper.Map<ClassDTO>(c))
             .ToListAsync();
 
         return classEntities;
@@ -67,12 +59,7 @@ public class ClassService(AppDbContext dbCtx)
         await _dbCtx.SaveChangesAsync();
 
         // Create the response DTO
-        var getClassDTO = new ClassDTO
-        {
-            Id = classEntity.Id,
-            Name = classEntity.Name,
-            Subject = classEntity.Subject,
-        };
+        var getClassDTO = _mapper.Map<ClassDTO>(classEntity);
 
         var location = $"/api/classes/{classEntity.Id}";
 

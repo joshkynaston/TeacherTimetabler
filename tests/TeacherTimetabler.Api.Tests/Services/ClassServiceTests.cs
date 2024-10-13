@@ -1,7 +1,9 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
 using TeacherTimetabler.Api.Models;
 using TeacherTimetabler.Api.Services;
+using TeacherTimetabler.Api.Mappings;
 
 namespace TeacherTimetabler.Api.Tests.Services;
 
@@ -44,8 +46,12 @@ public class ClassServiceTests
 
         _context.SaveChanges();
 
+        IMapper mapper = new MapperConfiguration(cfg =>
+            cfg.AddProfile(new MappingProfile())
+        ).CreateMapper();
+
         // Set up service with the context
-        _classService = new ClassService(_context);
+        _classService = new ClassService(_context, mapper);
     }
 
     [Fact]
