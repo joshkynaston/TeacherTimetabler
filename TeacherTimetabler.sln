@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeacherTimetabler.Api", "TeacherTimetabler.Api\TeacherTimetabler.Api.csproj", "{29233A8E-6E92-40FC-9510-681603F5872E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{89B6C37E-5554-4A6A-A638-FAED804E344B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeacherTimetabler.Api.Tests", "tests\TeacherTimetabler.Api.Tests\TeacherTimetabler.Api.Tests.csproj", "{3CBFD8F4-5E04-434A-A12C-BC0D28893FDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29233A8E-6E92-40FC-9510-681603F5872E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29233A8E-6E92-40FC-9510-681603F5872E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29233A8E-6E92-40FC-9510-681603F5872E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29233A8E-6E92-40FC-9510-681603F5872E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CBFD8F4-5E04-434A-A12C-BC0D28893FDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CBFD8F4-5E04-434A-A12C-BC0D28893FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CBFD8F4-5E04-434A-A12C-BC0D28893FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CBFD8F4-5E04-434A-A12C-BC0D28893FDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3CBFD8F4-5E04-434A-A12C-BC0D28893FDB} = {89B6C37E-5554-4A6A-A638-FAED804E344B}
+	EndGlobalSection
+EndGlobal
