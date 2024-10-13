@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,22 +13,48 @@ public class ClassController(ClassService classService) : ApiControllerBase
 {
     private readonly ClassService _classService = classService;
 
-    [HttpGet("{id:int}")]
+    [HttpGet("details")]
     [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [Authorize(Policy = "ResourceOwner")]
-    public async Task<IActionResult> GetClassById(int id)
+    [Authorize]
+    public async Task<IActionResult> GetClass([FromQuery] int? id, [FromQuery] string? name)
     {
         if (!TryGetUserId(out var userId))
         {
-            return BadRequest(new { Error = "User not found" });
+            return BadRequest("User not found");
         }
 
-        var getClassDTO = await _classService.GetClassByIdAsync(userId, id);
-        if (getClassDTO is null)
+        if (id == null && string.IsNullOrEmpty(name))
         {
-            return NotFound($"Class with id {id} not found");
+            return BadRequest("Either 'id' or 'name' must be provided.");
         }
+
+        if (id.HasValue && !string.IsNullOrEmpty(name))
+        {
+            return BadRequest("Only one of 'id' or 'name' should be provided.");
+        }
+
+        ClassDTO? getClassDTO = null;
+
+        if (id.HasValue)
+        {
+            getClassDTO = await _classService.GetClassByIdAsync(userId, id.Value);
+            if (getClassDTO is null)
+            {
+                return NotFound($"Class with id {id} not found");
+            }
+        }
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            getClassDTO = await _classService.GetClassByNameAsync(userId, name);
+            if (getClassDTO is null)
+            {
+                return NotFound($"Class with name {name} not found");
+            }
+        }
+
         return Ok(getClassDTO);
     }
 
@@ -86,12 +113,14 @@ public class ClassController(ClassService classService) : ApiControllerBase
             return BadRequest(new { Error = "User not found" });
         }
 
-        (bool isDeleted, ClassDTO? classDTO) = await _classService.DeleteClassAsync(userId, id);
-        if (!isDeleted)
+        bool wasDeleted = await _classService.DeleteClassAsync(userId, id);
+        if (!wasDeleted)
         {
             return NotFound(new { Error = $"Class with id {id} not found" });
-        } else {
-            return Ok(classDTO);
+        }
+        else
+        {
+            return NoContent();
         }
     }
 }

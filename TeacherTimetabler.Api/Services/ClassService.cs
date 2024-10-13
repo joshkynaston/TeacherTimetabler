@@ -26,6 +26,19 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
         }
     }
 
+    public async Task<ClassDTO?> GetClassByNameAsync(string userId, string name)
+    {
+        ClassEntity? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
+            c.Name == name && c.UserEntityId == userId
+        );
+
+        if (classEntity is null)
+        {
+            return null;
+        }
+        return _mapper.Map<ClassDTO>(classEntity);
+    }
+
     public async Task<IEnumerable<ClassDTO>> GetClassesAsync(string userId)
     {
         List<ClassDTO> classEntities = await _dbCtx
@@ -66,22 +79,25 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
         return (true, getClassDTO, location);
     }
 
-    public async Task<(bool isDeleted, ClassDTO? getClassDTO)> DeleteClassAsync(string userId, int id)
+    public async Task<bool> DeleteClassAsync(
+        string userId,
+        int id
+    )
     {
         // get ClassEntity from db
-        ClassEntity? classEntity = await _dbCtx.Classes.FirstAsync(c => c.Id == id && c.UserEntityId == userId);
+        ClassEntity? classEntity = await _dbCtx.Classes.FirstAsync(c =>
+            c.Id == id && c.UserEntityId == userId
+        );
         _dbCtx.Classes.Remove(classEntity);
         await _dbCtx.SaveChangesAsync();
 
         if (classEntity != null)
         {
-            return (true, new ClassDTO{
-                Id = id,
-                Name = classEntity.Name,
-                Subject = classEntity.Subject
-            });
-        } else {
-            return (false, null);
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

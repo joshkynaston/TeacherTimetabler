@@ -24,10 +24,7 @@ public class ClassServiceTests
 
         _context.Database.EnsureDeleted();
 
-        _context.Users.Add(new AppUserEntity{
-            FirstName = "John",
-            LastName = "Smith"
-        });
+        _context.Users.Add(new AppUserEntity { FirstName = "John", LastName = "Smith" });
 
         _context.SaveChanges();
 
@@ -40,7 +37,7 @@ public class ClassServiceTests
                 Name = "Math",
                 Subject = "Mathematics",
                 UserEntityId = _mock_user.Id,
-                UserEntity = _mock_user
+                UserEntity = _mock_user,
             }
         );
 
