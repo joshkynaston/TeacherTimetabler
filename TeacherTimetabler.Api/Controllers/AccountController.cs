@@ -1,0 +1,71 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using TeacherTimetabler.Api.Models.DTOs;
+using TeacherTimetabler.Api.Models.Entities;
+
+namespace TeacherTimetabler.Api.Controllers;
+
+[ApiController]
+[Route("api/account")]
+public class AccountController(
+    UserManager<AppUserEntity> userManager,
+    SignInManager<AppUserEntity> signInManager
+) : ControllerBase
+{
+    private readonly UserManager<AppUserEntity> _userManager = userManager;
+    private readonly SignInManager<AppUserEntity> _signInManager = signInManager;
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = new AppUserEntity
+        {
+            UserName = registerDTO.Email,
+            Email = registerDTO.Email,
+            FirstName = registerDTO.FirstName,
+            LastName = registerDTO.LastName,
+        };
+
+        var result = await _userManager.CreateAsync(user, registerDTO.Password);
+
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return BadRequest(ModelState);
+        }
+
+        await _signInManager.SignInAsync(user, isPersistent: false);
+
+        return Ok(new { message = "User created successfully" });
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _signInManager.PasswordSignInAsync(
+            loginDTO.Email,
+            loginDTO.Password,
+            isPersistent: false,
+            lockoutOnFailure: false
+        );
+
+        if (result.Succeeded) {
+            return Ok(new { message = "User logged in successfully" });
+        }
+
+        return Unauthorized( new { Error = "Unsuccessful login attempt" });
+    }
+}

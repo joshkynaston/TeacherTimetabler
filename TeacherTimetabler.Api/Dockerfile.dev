@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-end
+
+WORKDIR /app
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+COPY ./TeacherTimetabler.Api.csproj ./TeacherTimetabler.Api/
+WORKDIR /app/TeacherTimetabler.Api
+
+RUN dotnet restore
+COPY . .
+EXPOSE 5000
+
+CMD ["dotnet", "watch", "run"]
