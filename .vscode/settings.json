@@ -9,6 +9,7 @@
         "**/Thumbs.db": true,
         "**/obj": true,
         "**/bin": true,
+        "**/Migrations": true
     },
     "csharpextensions.useFileScopedNamespace": true,
     "testing.showCoverageInExplorer": false,
