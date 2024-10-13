@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TeacherTimetabler.Api.Auth;
+using TeacherTimetabler.Api.Security;
 using TeacherTimetabler.Api.Data;
 using TeacherTimetabler.Api.Models.Entities;
 using TeacherTimetabler.Api.Services;

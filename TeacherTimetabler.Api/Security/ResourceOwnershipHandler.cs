@@ -2,11 +2,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
-using TeacherTimetabler.Api.Models.Entities;
 
-namespace TeacherTimetabler.Api.Auth;
+namespace TeacherTimetabler.Api.Security;
 
-public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwnershipHandler> logger) : AuthorizationHandler<ResourceOwnershipRequirement>
+public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwnershipHandler> logger)
+    : AuthorizationHandler<ResourceOwnershipRequirement>
 {
     private readonly AppDbContext _dbCtx = dbCtx;
     private readonly ILogger<ResourceOwnershipHandler> _logger = logger;
@@ -24,7 +24,7 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
             context.Fail();
             return;
         }
-        
+
         // Extract RouteData from HttpContext to get the resource (class) ID
         if (context.Resource is HttpContext httpContext)
         {
@@ -45,7 +45,9 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
             var resource = await _dbCtx.Classes.FirstOrDefaultAsync(c => c.Id == entityId);
             if (resource == null || resource.UserEntityId != userId)
             {
-                _logger.LogError($"Class not found or not owned by user {userId}, failing authorization.");
+                _logger.LogError(
+                    $"Class not found or not owned by user {userId}, failing authorization."
+                );
                 context.Fail();
                 return;
             }
