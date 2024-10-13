@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
-using TeacherTimetabler.Api.Models.DTOs;
-using TeacherTimetabler.Api.Models.Entities;
+using TeacherTimetabler.Api.Models;
 using TeacherTimetabler.Api.Services;
 
 namespace TeacherTimetabler.Api.Tests.Services;

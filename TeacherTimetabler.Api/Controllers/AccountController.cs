@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TeacherTimetabler.Api.Models.DTOs;
-using TeacherTimetabler.Api.Models.Entities;
+using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Controllers;
 

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Security;
 using TeacherTimetabler.Api.Data;
-using TeacherTimetabler.Api.Models.Entities;
+using TeacherTimetabler.Api.Models;
 using TeacherTimetabler.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);

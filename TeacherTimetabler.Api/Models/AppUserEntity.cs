@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace TeacherTimetabler.Api.Models.Entities;
+namespace TeacherTimetabler.Api.Models;
 
 public class AppUserEntity : IdentityUser { 
     [Required]

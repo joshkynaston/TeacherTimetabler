@@ -1,4 +1,4 @@
-namespace TeacherTimetabler.Api.Models.Entities;
+namespace TeacherTimetabler.Api.Models;
 
 public class ClassEntity : IOwnedEntity
 {

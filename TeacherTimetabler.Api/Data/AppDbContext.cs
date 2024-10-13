@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TeacherTimetabler.Api.Models.Entities;
+using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Data;
 

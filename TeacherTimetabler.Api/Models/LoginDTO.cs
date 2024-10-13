@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-namespace TeacherTimetabler.Api.Models.DTOs;
+using System.Diagnostics.CodeAnalysis;
+namespace TeacherTimetabler.Api.Models;
 
+
+[ExcludeFromCodeCoverage]
 public class LoginDTO
 {
     [Required]

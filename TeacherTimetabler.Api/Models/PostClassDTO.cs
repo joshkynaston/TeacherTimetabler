@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
-namespace TeacherTimetabler.Api.Models.DTOs;
+namespace TeacherTimetabler.Api.Models;
 
-public record ClassDTO
+[ExcludeFromCodeCoverage]
+public record PostClassDTO
 {
-    public int Id { get; init; }
-
     [Required]
     public required string Name { get; init; }
 
