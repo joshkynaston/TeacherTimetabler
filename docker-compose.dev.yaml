@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: ./TeacherTimetabler.Api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./TeacherTimetabler.Api:/app/TeacherTimetabler.Api
+      - /app/TeacherTimetabler.Api/bin/
+      - /app/TeacherTimetabler.Api/obj/
+    ports:
+      - "8080:5000"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=db;Username=postgres;Password=postgres
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    command: >
+      /bin/bash -c "dotnet ef database update && dotnet watch run"
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+
+networks:
+  app-network:
