@@ -11,7 +11,7 @@ public class ClassServiceTests
 {
     private readonly ClassService _classService;
     private readonly AppDbContext _context;
-    private readonly AppUserEntity _mock_user;
+    private readonly UserEntity _mock_user;
 
     public ClassServiceTests()
     {
@@ -24,7 +24,7 @@ public class ClassServiceTests
 
         _context.Database.EnsureDeleted();
 
-        _context.Users.Add(new AppUserEntity { FirstName = "John", LastName = "Smith" });
+        _context.Users.Add(new UserEntity { FirstName = "John", LastName = "Smith" });
 
         _context.SaveChanges();
 

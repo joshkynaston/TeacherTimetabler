@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,6 +76,7 @@ public class ClassController(ClassService classService) : ApiControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Authorize]
     public async Task<IActionResult> PostClass(PostClassDTO postClassDTO)
     {
         if (!ModelState.IsValid)
@@ -105,7 +105,7 @@ public class ClassController(ClassService classService) : ApiControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Policy = "ResourceOwner")]
+    [Authorize]
     public async Task<IActionResult> DeleteClassById(int id)
     {
         if (!TryGetUserId(out var userId))

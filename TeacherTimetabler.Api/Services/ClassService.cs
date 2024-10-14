@@ -55,7 +55,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     )
     {
         // Get user from the database
-        AppUserEntity? user =
+        UserEntity? user =
             await _dbCtx.Users.FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new InvalidOperationException("User not found");
 

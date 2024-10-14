@@ -7,5 +7,5 @@ public class ClassEntity : IOwnedEntity
     public string? Subject { get; set; }
 
     public required string UserEntityId { get; set; }
-    public required AppUserEntity UserEntity { get; set; }
+    public required UserEntity UserEntity { get; set; }
 }
