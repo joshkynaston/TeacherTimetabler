@@ -7,12 +7,12 @@ namespace TeacherTimetabler.Api.Controllers;
 [ApiController]
 [Route("api/account")]
 public class AccountController(
-    UserManager<UserEntity> userManager,
-    SignInManager<UserEntity> signInManager
+    UserManager<Teacher> userManager,
+    SignInManager<Teacher> signInManager
 ) : ControllerBase
 {
-    private readonly UserManager<UserEntity> _userManager = userManager;
-    private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly UserManager<Teacher> _userManager = userManager;
+    private readonly SignInManager<Teacher> _signInManager = signInManager;
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
@@ -22,7 +22,7 @@ public class AccountController(
             return BadRequest(ModelState);
         }
 
-        var user = new UserEntity
+        var user = new Teacher
         {
             UserName = registerDTO.Email,
             Email = registerDTO.Email,

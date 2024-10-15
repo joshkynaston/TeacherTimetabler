@@ -1,11 +1,11 @@
 namespace TeacherTimetabler.Api.Models;
 
-public class ClassEntity : IOwnedEntity
+public class Class : IOwnedEntity
 {
     public int Id { get; set; }
     public required string Name { get; set; }
     public string? Subject { get; set; }
 
-    public required string UserEntityId { get; set; }
-    public required UserEntity UserEntity { get; set; }
+    public required string TeacherId { get; set; }
+    public required Teacher Teacher { get; set; }
 }

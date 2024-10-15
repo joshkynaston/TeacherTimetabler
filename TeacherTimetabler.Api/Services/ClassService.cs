@@ -12,8 +12,8 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
 
     public async Task<ClassDTO?> GetClassByIdAsync(string userId, int entityId)
     {
-        ClassEntity? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
-            c.Id == entityId && c.UserEntityId == userId
+        Class? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
+            c.Id == entityId && c.TeacherId == userId
         );
 
         if (classEntity is null)
@@ -28,8 +28,8 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
 
     public async Task<ClassDTO?> GetClassByNameAsync(string userId, string name)
     {
-        ClassEntity? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
-            c.Name == name && c.UserEntityId == userId
+        Class? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
+            c.Name == name && c.TeacherId == userId
         );
 
         if (classEntity is null)
@@ -42,7 +42,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     public async Task<IEnumerable<ClassDTO>> GetClassesAsync(string userId)
     {
         List<ClassDTO> classEntities = await _dbCtx
-            .Classes.Where(c => c.UserEntityId == userId)
+            .Classes.Where(c => c.TeacherId == userId)
             .Select(c => _mapper.Map<ClassDTO>(c))
             .ToListAsync();
 
@@ -55,17 +55,17 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     )
     {
         // Get user from the database
-        UserEntity? user =
+        Teacher? user =
             await _dbCtx.Users.FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new InvalidOperationException("User not found");
 
         // Create the class entity
-        var classEntity = new ClassEntity
+        var classEntity = new Class
         {
             Name = postClassDTO.Name,
             Subject = postClassDTO.Subject,
-            UserEntityId = user.Id,
-            UserEntity = user,
+            TeacherId = user.Id,
+            Teacher = user,
         };
 
         await _dbCtx.Classes.AddAsync(classEntity);
@@ -85,8 +85,8 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     )
     {
         // get ClassEntity from db
-        ClassEntity? classEntity = await _dbCtx.Classes.FirstAsync(c =>
-            c.Id == id && c.UserEntityId == userId
+        Class? classEntity = await _dbCtx.Classes.FirstAsync(c =>
+            c.Id == id && c.TeacherId == userId
         );
         _dbCtx.Classes.Remove(classEntity);
         await _dbCtx.SaveChangesAsync();
