@@ -16,5 +16,9 @@
     "material-icon-theme.folders.associations": {
         "Properties": "Environment",
         "DTOs": "Enum"
-    }
+    },
+    "editor.fontSize": 10,
+    "editor.fontFamily": "'FiraCode Nerd Font', 'monospace', monospace",
+    "debug.console.fontSize": 10,
+    "terminal.integrated.fontSize": 10
 }
