@@ -1,4 +1,5 @@
 using AutoMapper;
+using TeacherTimetabler.Api.DTOs;
 using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Mappings;

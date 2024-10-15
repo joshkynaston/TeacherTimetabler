@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TeacherTimetabler.Api.Models;
+using TeacherTimetabler.Api.DTOs;
 using TeacherTimetabler.Api.Services;
 
 namespace TeacherTimetabler.Api.Controllers;

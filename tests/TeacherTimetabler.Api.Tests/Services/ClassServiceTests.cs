@@ -4,6 +4,7 @@ using TeacherTimetabler.Api.Data;
 using TeacherTimetabler.Api.Models;
 using TeacherTimetabler.Api.Services;
 using TeacherTimetabler.Api.Mappings;
+using TeacherTimetabler.Api.DTOs;
 
 namespace TeacherTimetabler.Api.Tests.Services;
 

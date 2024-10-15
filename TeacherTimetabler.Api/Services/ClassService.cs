@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
+using TeacherTimetabler.Api.DTOs;
 using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Services;

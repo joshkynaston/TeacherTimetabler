@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TeacherTimetabler.Api.DTOs;
 using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Controllers;
