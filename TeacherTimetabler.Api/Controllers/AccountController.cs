@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TeacherTimetabler.Api.DTOs;
@@ -62,10 +63,48 @@ public class AccountController(
             lockoutOnFailure: false
         );
 
-        if (result.Succeeded) {
+        if (result.Succeeded)
+        {
             return Ok(new { message = "User logged in successfully" });
         }
 
-        return Unauthorized( new { Error = "Unsuccessful login attempt" });
+        return Unauthorized(new { Error = "Unsuccessful login attempt" });
+    }
+
+    [HttpPatch("config")]
+    [Authorize]
+    public async Task<IActionResult> Config([FromBody] TeacherConfigDTO configDTO)
+    {
+        Teacher? teacher = await _userManager.GetUserAsync(User);
+        string? firstName = configDTO.FirstName;
+        string? lastName = configDTO.LastName;
+
+        if (teacher == null)
+        {
+            return Unauthorized(new { Error = "User not found" });
+        }
+
+        if (!string.IsNullOrEmpty(firstName))
+        {
+            teacher.FirstName = firstName;
+        }
+
+        if (!string.IsNullOrEmpty(lastName))
+        {
+            teacher.LastName = lastName;
+        }
+
+        teacher.TimetableIsBiweekly = configDTO.TimetableIsBiweekly;
+
+        IdentityResult result = await _userManager.UpdateAsync(teacher);
+
+        if (result.Succeeded)
+        {
+            return Ok(new { message = "Account configuration updated" });
+        }
+        else
+        {
+            return BadRequest(new { Error = "Failed to update account configuration" });
+        }
     }
 }

@@ -11,7 +11,7 @@ public class Teacher : IdentityUser
     [Required]
     public required string LastName { get; set; }
 
-    public string? DefaultTimetableType { get; set; }
+    public bool TimetableIsBiweekly { get; set; }
 
     public ICollection<Timetable>? Timetables { get; set; }
 }
