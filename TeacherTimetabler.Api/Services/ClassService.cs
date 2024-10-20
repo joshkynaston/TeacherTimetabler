@@ -11,10 +11,10 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     private readonly AppDbContext _dbCtx = dbCtx;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<ClassDTO?> GetClassByIdAsync(string userId, int entityId)
+    public async Task<ClassDTO?> GetClassByIdAsync(string userId, int classId)
     {
         Class? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
-            c.Id == entityId && c.TeacherId == userId
+            c.Id == classId && c.UserId == userId
         );
 
         if (classEntity is null)
@@ -30,7 +30,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     public async Task<ClassDTO?> GetClassByNameAsync(string userId, string name)
     {
         Class? classEntity = await _dbCtx.Classes.FirstOrDefaultAsync(c =>
-            c.Name == name && c.TeacherId == userId
+            c.Name == name && c.UserId == userId
         );
 
         if (classEntity is null)
@@ -43,7 +43,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     public async Task<IEnumerable<ClassDTO>> GetClassesAsync(string userId)
     {
         List<ClassDTO> classEntities = await _dbCtx
-            .Classes.Where(c => c.TeacherId == userId)
+            .Classes.Where(c => c.UserId == userId)
             .Select(c => _mapper.Map<ClassDTO>(c))
             .ToListAsync();
 
@@ -65,8 +65,8 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
         {
             Name = postClassDTO.Name,
             Subject = postClassDTO.Subject,
-            TeacherId = user.Id,
-            Teacher = user,
+            UserId = userId,
+            User = user,
         };
 
         await _dbCtx.Classes.AddAsync(classEntity);
@@ -86,9 +86,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
     )
     {
         // get ClassEntity from db
-        Class? classEntity = await _dbCtx.Classes.FirstAsync(c =>
-            c.Id == id && c.TeacherId == userId
-        );
+        Class? classEntity = await _dbCtx.Classes.FirstAsync(c => c.Id == id && c.UserId == userId);
         _dbCtx.Classes.Remove(classEntity);
         await _dbCtx.SaveChangesAsync();
 

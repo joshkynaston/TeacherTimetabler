@@ -3,8 +3,8 @@ namespace TeacherTimetabler.Api.Models;
 public class WeekInstance : IOwnedEntity
 {
     // Implement IOwnedEntity
-    public required string TeacherId { get; set; }
-    public required Teacher Teacher { get; set; }
+    public required string UserId { get; set; }
+    public required User User { get; set; }
 
     // Properties
     public int Id {get; set;}

@@ -43,7 +43,7 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
 
             // Check if the class exists and is owned by the current user
             var resource = await _dbCtx.Classes.FirstOrDefaultAsync(c => c.Id == entityId);
-            if (resource == null || resource.TeacherId != userId)
+            if (resource == null || resource.UserId != userId)
             {
                 _logger.LogError(
                     $"Class not found or not owned by user {userId}, failing authorization."

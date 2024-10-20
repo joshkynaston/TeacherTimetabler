@@ -6,6 +6,6 @@ public class Class : IOwnedEntity
     public required string Name { get; set; }
     public string? Subject { get; set; }
 
-    public required string TeacherId { get; set; }
-    public required Teacher Teacher { get; set; }
+    public required string UserId { get; set; }
+    public required User User { get; set; }
 }

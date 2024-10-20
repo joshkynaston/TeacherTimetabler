@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace TeacherTimetabler.Api.Models;
 
-public class Teacher : IdentityUser
+public class User : IdentityUser
 {
     [Required]
     public required string FirstName { get; set; }

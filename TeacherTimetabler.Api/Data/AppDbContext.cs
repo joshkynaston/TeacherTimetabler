@@ -4,8 +4,7 @@ using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Data;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<Teacher>(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
 {
     public DbSet<Class> Classes { get; set; }
     public DbSet<Timetable> Timetables {get; set;}

@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register ASP.NET Core Identity with cookie-based authentication
 builder
-    .Services.AddIdentity<Teacher, IdentityRole>()
+    .Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
