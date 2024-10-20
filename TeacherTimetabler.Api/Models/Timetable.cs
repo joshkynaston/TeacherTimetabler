@@ -12,6 +12,5 @@ public class Timetable : IOwnedEntity
 
     // Navigation properties
     public ICollection<RecurringItem>? RecurringItems { get; set; }
-    public ICollection<Timeslot>? Timeslots {get; set;}
-
+    public ICollection<Timeslot>? Timeslots { get; set; }
 }

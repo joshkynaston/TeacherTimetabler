@@ -7,7 +7,7 @@ public class WeekInstance : IOwnedEntity
     public required User User { get; set; }
 
     // Properties
-    public int Id {get; set;}
+    public int Id { get; set; }
     public int WeekNumber { get; set; }
     public DateTime StartDate { get; set; }
     public string? WeekType { get; set; }

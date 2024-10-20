@@ -12,6 +12,6 @@ public class Timeslot : IOwnedEntity
     public TimeSpan EndTime { get; set; }
 
     // Foreign keys
-    public int TimetableId {get; set;}
-    public required Timetable Timetable {get; set;}
+    public int TimetableId { get; set; }
+    public required Timetable Timetable { get; set; }
 }
