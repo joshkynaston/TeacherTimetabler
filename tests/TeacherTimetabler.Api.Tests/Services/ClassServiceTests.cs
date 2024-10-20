@@ -13,7 +13,7 @@ namespace TeacherTimetabler.Api.Tests.Services;
 
 public class ClassServiceTests
 {
-    public class GetClassForUserByIdAsyncTests : ClassServiceTestsBase
+    public class GetClassByIdAsyncTests : ClassServiceTestsBase
     {
         [Theory]
         [InlineData(1, true)]
