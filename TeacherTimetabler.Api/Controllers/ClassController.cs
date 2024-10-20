@@ -1,62 +1,18 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeacherTimetabler.Api.DTOs;
-using TeacherTimetabler.Api.Services;
+using TeacherTimetabler.Api.Interfaces;
 
 namespace TeacherTimetabler.Api.Controllers;
 
 [ApiController]
 [Route("api/classes")]
-public class ClassController(ClassService classService) : ApiControllerBase
+public class ClassController(IClassService classService, IUserService userService) : ControllerBase
 {
-    private readonly ClassService _classService = classService;
+    private readonly IClassService _classService = classService;
+    private readonly IUserService _userService = userService;
 
-    [HttpGet("details")]
-    [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [Authorize]
-    public async Task<IActionResult> GetClass([FromQuery] int? id, [FromQuery] string? name)
-    {
-        if (!TryGetUserId(out var userId))
-        {
-            return BadRequest("User not found");
-        }
-
-        if (id == null && string.IsNullOrEmpty(name))
-        {
-            return BadRequest("Either 'id' or 'name' must be provided.");
-        }
-
-        if (id.HasValue && !string.IsNullOrEmpty(name))
-        {
-            return BadRequest("Only one of 'id' or 'name' should be provided.");
-        }
-
-        ClassDTO? getClassDTO = null;
-
-        if (id.HasValue)
-        {
-            getClassDTO = await _classService.GetClassByIdAsync(userId, id.Value);
-            if (getClassDTO is null)
-            {
-                return NotFound($"Class with id {id} not found");
-            }
-        }
-
-        if (!string.IsNullOrEmpty(name))
-        {
-            getClassDTO = await _classService.GetClassByNameAsync(userId, name);
-            if (getClassDTO is null)
-            {
-                return NotFound($"Class with name {name} not found");
-            }
-        }
-
-        return Ok(getClassDTO);
-    }
-
+    // GET /api/classes
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ClassDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -64,15 +20,42 @@ public class ClassController(ClassService classService) : ApiControllerBase
     [Authorize]
     public async Task<IActionResult> GetClasses()
     {
-        if (!TryGetUserId(out var userId))
+        var user = await _userService.GetCurrentUserAsync();
+
+        if (user is null)
         {
             return BadRequest(new { Error = "User not found" });
         }
 
-        var result = await _classService.GetClassesAsync(userId);
+        IEnumerable<ClassDTO> result = await _classService.GetClassesAsync(user.Id);
         return Ok(result);
     }
 
+    // GET /api/classes/{id}
+    [HttpGet("{classId:int}")]
+    [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize]
+    public async Task<IActionResult> GetClass([FromRoute] int classId)
+    {
+        var user = await _userService.GetCurrentUserAsync();
+
+        if (user is null)
+        {
+            return BadRequest(new { Error = "User not found" });
+        }
+
+        var classDTO = await _classService.GetClassByIdAsync(user.Id, classId);
+        if (classDTO is null)
+        {
+            return NotFound($"Class with id {classId} not found");
+        }
+
+        return Ok(classDTO);
+    }
+
+    // POST /api/classes
     [HttpPost]
     [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -81,42 +64,43 @@ public class ClassController(ClassService classService) : ApiControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(new { Error = "Invalid or incomplete class data" });
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId is null)
+        var user = await _userService.GetCurrentUserAsync();
+
+        if (user is null)
         {
             return BadRequest(new { Error = "User not found" });
         }
 
-        var (success, classDTO, location) = await _classService.CreateClassAsync(
-            userId,
-            postClassDTO
-        );
-        if (!success)
+        ClassDTO? classDTO = await _classService.CreateClassAsync(user.Id, postClassDTO);
+
+        if (classDTO is null)
         {
             return BadRequest(new { Error = "Failed to create class." });
         }
         else
         {
-            return Created(location, classDTO);
+            return Created($"/api/classes/{classDTO.Id}", classDTO);
         }
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{classId:int}")]
     [Authorize]
-    public async Task<IActionResult> DeleteClassById(int id)
+    public async Task<IActionResult> DeleteClassById([FromRoute] int classId)
     {
-        if (!TryGetUserId(out var userId))
+        var user = await _userService.GetCurrentUserAsync();
+
+        if (user is null)
         {
             return BadRequest(new { Error = "User not found" });
         }
 
-        bool wasDeleted = await _classService.DeleteClassAsync(userId, id);
+        bool wasDeleted = await _classService.DeleteClassAsync(user.Id, classId);
         if (!wasDeleted)
         {
-            return NotFound(new { Error = $"Class with id {id} not found" });
+            return NotFound(new { Error = $"Class with id {classId} not found" });
         }
         else
         {

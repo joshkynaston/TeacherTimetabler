@@ -2,11 +2,12 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
 using TeacherTimetabler.Api.DTOs;
+using TeacherTimetabler.Api.Interfaces;
 using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Services;
 
-public class ClassService(AppDbContext dbCtx, IMapper mapper)
+public class ClassService(AppDbContext dbCtx, IMapper mapper) : IClassService
 {
     private readonly AppDbContext _dbCtx = dbCtx;
     private readonly IMapper _mapper = mapper;
@@ -37,6 +38,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
         {
             return null;
         }
+
         return _mapper.Map<ClassDTO>(classEntity);
     }
 
@@ -50,15 +52,13 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
         return classEntities;
     }
 
-    public async Task<(bool success, ClassDTO? getClassDTO, string? location)> CreateClassAsync(
-        string userId,
-        PostClassDTO postClassDTO
-    )
+    public async Task<ClassDTO?> CreateClassAsync(string userId, PostClassDTO postClassDTO)
     {
-        // Get user from the database
-        Teacher? user =
-            await _dbCtx.Users.FirstOrDefaultAsync(u => u.Id == userId)
-            ?? throw new InvalidOperationException("User not found");
+        var user = await _dbCtx.Users.FindAsync(userId);
+        if (user is null)
+        {
+            return null;
+        }
 
         // Create the class entity
         var classEntity = new Class
@@ -75,15 +75,10 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper)
         // Create the response DTO
         var getClassDTO = _mapper.Map<ClassDTO>(classEntity);
 
-        var location = $"/api/classes/{classEntity.Id}";
-
-        return (true, getClassDTO, location);
+        return getClassDTO;
     }
 
-    public async Task<bool> DeleteClassAsync(
-        string userId,
-        int id
-    )
+    public async Task<bool> DeleteClassAsync(string userId, int id)
     {
         // get ClassEntity from db
         Class? classEntity = await _dbCtx.Classes.FirstAsync(c => c.Id == id && c.UserId == userId);
