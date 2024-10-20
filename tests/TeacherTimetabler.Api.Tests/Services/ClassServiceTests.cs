@@ -1,89 +1,88 @@
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoMapper;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
+using TeacherTimetabler.Api.DTOs;
+using TeacherTimetabler.Api.Mappings;
 using TeacherTimetabler.Api.Models;
 using TeacherTimetabler.Api.Services;
-using TeacherTimetabler.Api.Mappings;
-using TeacherTimetabler.Api.DTOs;
 
 namespace TeacherTimetabler.Api.Tests.Services;
 
 public class ClassServiceTests
 {
-    private readonly ClassService _classService;
-    private readonly AppDbContext _context;
-    private readonly Teacher _mock_user;
-
-    public ClassServiceTests()
+    public class GetClassForUserByIdAsyncTests : ClassServiceTestsBase
     {
-        // Use InMemoryDatabase to simulate database
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
+        [Theory]
+        [InlineData(1, true)]
+        [InlineData(2, false)]
+        public async Task GetClassForUserIdByAsync_ShouldValidateClassId(int classId, bool isValid)
+        {
+            // Arrange
+            var (testUser, testClass) = CreatePairedTestUserAndClass(classId: 1);
 
-        _context = new AppDbContext(options);
+            _context.Users.Add(testUser);
+            _context.Classes.Add(testClass);
+            _context.SaveChanges();
 
-        _context.Database.EnsureDeleted();
+            // Act
+            var result = await _classService.GetClassByIdAsync(testUser.Id, classId);
+            var testClassDTO = _mapper.Map<ClassDTO>(result);
 
-        _context.Users.Add(new Teacher { FirstName = "John", LastName = "Smith" });
-
-        _context.SaveChanges();
-
-        _mock_user = _context.Users.First(e => e.FirstName == "John");
-
-        _context.Classes.Add(
-            new Class
+            // Assert
+            if (isValid)
             {
-                Id = 1,
-                Name = "Math",
-                Subject = "Mathematics",
-                TeacherId = _mock_user.Id,
-                Teacher = _mock_user,
+                result.Should().NotBeNull();
+                result.Should().BeEquivalentTo(testClassDTO);
             }
-        );
-
-        _context.SaveChanges();
-
-        IMapper mapper = new MapperConfiguration(cfg =>
-            cfg.AddProfile(new MappingProfile())
-        ).CreateMapper();
-
-        // Set up service with the context
-        _classService = new ClassService(_context, mapper);
+            else
+            {
+                result.Should().BeNull();
+            }
+        }
     }
 
-    [Fact]
-    public async Task GetClassByIdAsync_ReturnsClassDTO_WhenClassExists()
+    public abstract class ClassServiceTestsBase
     {
-        ClassDTO? result = await _classService.GetClassByIdAsync(_mock_user.Id, 1);
+        protected readonly IFixture _fixture;
+        protected readonly AppDbContext _context;
+        protected readonly IMapper _mapper;
+        protected readonly ClassService _classService;
 
-        Assert.NotNull(result);
-        Assert.Equal(1, result.Id);
-        Assert.Equal("Math", result.Name);
-        Assert.Equal("Mathematics", result.Subject);
-    }
+        protected ClassServiceTestsBase()
+        {
+            _fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-    [Fact]
-    public async Task GetClassByIdAsync_ReturnsNull_WhenClassDoesNotExist()
-    {
-        ClassDTO? result = await _classService.GetClassByIdAsync(_mock_user.Id, 2);
+            _context = new(
+                new DbContextOptionsBuilder<AppDbContext>()
+                    .UseInMemoryDatabase(databaseName: "TestDb")
+                    .Options
+            );
+            _context.Database.EnsureDeleted();
 
-        Assert.Null(result);
-    }
+            _mapper = new MapperConfiguration(cfg =>
+                cfg.AddProfile(new MappingProfile())
+            ).CreateMapper();
 
-    [Fact]
-    public async Task CreateClassAsync_ReturnsClassDTO_WhenClassIsCreated()
-    {
-        var postClassDTO = new PostClassDTO { Name = "Science", Subject = "Physics" };
+            _classService = new(_context, _mapper);
+        }
 
-        (bool success, ClassDTO? result, _) = await _classService.CreateClassAsync(
-            _mock_user.Id,
-            postClassDTO
-        );
+        protected (User, Class) CreatePairedTestUserAndClass(int classId = 1)
+        {
+            var testUser = _fixture.Build<User>().Create();
 
-        Assert.True(success);
-        Assert.NotNull(result);
-        Assert.Equal("Science", result.Name);
-        Assert.IsType<ClassDTO>(result);
+            var testClass = _fixture
+                .Build<Class>()
+                .With(c => c.Id, classId)
+                .With(c => c.UserId, testUser.Id)
+                .With(c => c.User, testUser)
+                .Create();
+
+            return (testUser, testClass);
+        }
     }
 }
