@@ -2,7 +2,7 @@ using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Repositories;
 
-public interface ITeacherEntityRepository<T>
+public interface IOwnedRepo<T>
   where T : class, IOwnedByTeacher
 {
   Task<T?> GetAsync(string userId, int entityId);

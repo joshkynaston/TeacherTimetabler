@@ -4,13 +4,13 @@ using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Repositories;
 
-public class OwnedRepository<T> : ITeacherEntityRepository<T>
+public class OwnedRepo<T> : IOwnedRepo<T>
   where T : class, IOwnedByTeacher
 {
   protected readonly AppDbContext _context;
   protected readonly DbSet<T> _dbSet;
 
-  public OwnedRepository(AppDbContext context)
+  public OwnedRepo(AppDbContext context)
   {
     _context = context;
     _dbSet = _context.Set<T>();
@@ -33,7 +33,7 @@ public class OwnedRepository<T> : ITeacherEntityRepository<T>
 
   public async Task<T?> GetAsync(string userId, int entityId)
   {
-    return await _dbSet.FirstOrDefaultAsync(c => c.TeacherId == userId && c.Id == entityId);
+    return await _dbSet.FirstOrDefaultAsync(c => c.TeacherId == userId && c.EntityId == entityId);
   }
 
   public void Update(T entity)
