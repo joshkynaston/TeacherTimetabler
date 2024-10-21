@@ -6,13 +6,13 @@ using TeacherTimetabler.Api.Models;
 
 namespace TeacherTimetabler.Api.Controllers;
 
+// TODO: This controller is doing far too much - offload some of this to the service layer
 [ApiController]
 [Route("api/account")]
-public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
-    : ControllerBase
+public class AccountController(UserManager<Teacher> userManager, SignInManager<Teacher> signInManager) : ControllerBase
 {
-    private readonly UserManager<User> _userManager = userManager;
-    private readonly SignInManager<User> _signInManager = signInManager;
+  private readonly UserManager<Teacher> _userManager = userManager;
+  private readonly SignInManager<Teacher> _signInManager = signInManager;
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
@@ -22,7 +22,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             return BadRequest(ModelState);
         }
 
-        var user = new User
+    var user = new Teacher
         {
             UserName = registerDTO.Email,
             Email = registerDTO.Email,
@@ -73,7 +73,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     [Authorize]
     public async Task<IActionResult> Config([FromBody] TeacherConfigDTO configDTO)
     {
-        User? teacher = await _userManager.GetUserAsync(User);
+    Teacher? teacher = await _userManager.GetUserAsync(User);
         string? firstName = configDTO.FirstName;
         string? lastName = configDTO.LastName;
 

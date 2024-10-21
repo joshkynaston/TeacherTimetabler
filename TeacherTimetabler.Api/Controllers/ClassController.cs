@@ -7,10 +7,10 @@ namespace TeacherTimetabler.Api.Controllers;
 
 [ApiController]
 [Route("api/classes")]
-public class ClassController(IClassService classService, IUserService userService) : ControllerBase
+public class ClassController(IClassService classService, ITeacherService userService) : ControllerBase
 {
     private readonly IClassService _classService = classService;
-    private readonly IUserService _userService = userService;
+  private readonly ITeacherService _userService = userService;
 
     // GET /api/classes
     [HttpGet]

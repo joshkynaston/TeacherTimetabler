@@ -71,15 +71,15 @@ public class ClassServiceTests
             _classService = new(_context, _mapper);
         }
 
-        protected (User, Class) CreatePairedTestUserAndClass(int classId = 1)
+    protected (Teacher, Class) CreatePairedTestUserAndClass(int classId = 1)
         {
-            var testUser = _fixture.Build<User>().Create();
+      var testUser = _fixture.Build<Teacher>().Create();
 
             var testClass = _fixture
                 .Build<Class>()
                 .With(c => c.Id, classId)
-                .With(c => c.UserId, testUser.Id)
-                .With(c => c.User, testUser)
+        .With(c => c.TeacherId, testUser.Id)
+        .With(c => c.Teacher, testUser)
                 .Create();
 
             return (testUser, testClass);
