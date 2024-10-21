@@ -31,7 +31,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
     return Ok(result);
   }
 
-  // GET /api/classes/{id}
+  // GET /api/classes/{classId}
   [HttpGet("{classId:int}")]
   [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -46,7 +46,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
       return BadRequest(new { Error = "User not found" });
     }
 
-    var classDTO = await _classService.GetClassByIdAsync(user.Id, classId);
+    var classDTO = await _classService.GetClassAsync(user.Id, classId);
     if (classDTO is null)
     {
       return NotFound($"Class with id {classId} not found");
@@ -86,6 +86,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
     }
   }
 
+  // DELETE /api/classes/{classId}
   [HttpDelete("{classId:int}")]
   [Authorize]
   public async Task<IActionResult> DeleteClassById([FromRoute] int classId)

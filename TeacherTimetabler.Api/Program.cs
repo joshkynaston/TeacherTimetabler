@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TeacherTimetabler.Api.Data;
 using TeacherTimetabler.Api.Models;
+using TeacherTimetabler.Api.Repositories;
 using TeacherTimetabler.Api.Security;
 using TeacherTimetabler.Api.Services;
 
@@ -18,6 +19,7 @@ builder.WebHost.ConfigureKestrel(options =>
 // Register services
 builder.Services.AddScoped<ClassService>();
 builder.Services.AddScoped<IAuthorizationHandler, ResourceOwnershipHandler>();
+builder.Services.AddScoped(typeof(IOwnedRepo<>), typeof(OwnedRepo<>));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))

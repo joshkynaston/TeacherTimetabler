@@ -16,7 +16,7 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
     ResourceOwnershipRequirement requirement
   )
   {
-    // Extract user ID from the current context (JWT or cookie)
+    // Extract user ID from context
     var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     if (userId == null)
     {
@@ -25,7 +25,7 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
       return;
     }
 
-    // Extract RouteData from HttpContext to get the resource (class) ID
+    // Extract RouteData from HttpContext to get the resource ID
     if (context.Resource is HttpContext httpContext)
     {
       var routeData = httpContext.GetRouteData();
@@ -39,16 +39,16 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
         return;
       }
 
-      // Check if the class exists and is owned by the current user
-      var resource = await _dbCtx.Classes.FirstOrDefaultAsync(c => c.Id == entityId);
+      // Check if the entity exists and is owned by the current user
+      var resource = await _dbCtx.Classes.FirstOrDefaultAsync(c => c.EntityId == entityId);
       if (resource == null || resource.TeacherId != userId)
       {
-        _logger.LogError($"Class not found or not owned by user {userId}, failing authorization.");
+        _logger.LogError("Class not found or not owned by user {userId}, failing authorization.", userId);
         context.Fail();
         return;
       }
 
-      _logger.LogInformation($"User {userId} is authorized to access class {entityId}.");
+      _logger.LogInformation("User {userId} is authorized to access class {entityId}.", userId, entityId);
       context.Succeed(requirement);
     }
     else
