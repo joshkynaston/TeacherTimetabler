@@ -6,8 +6,9 @@ namespace TeacherTimetabler.Api.Mappings;
 
 public class MappingProfile : Profile
 {
-    public MappingProfile()
-    {
-        CreateMap<Class, ClassDTO>();
-    }
+  public MappingProfile()
+  {
+    CreateMap<Class, GetClassDTO>();
+    CreateMap<Class, PostClassDTO>();
+  }
 }

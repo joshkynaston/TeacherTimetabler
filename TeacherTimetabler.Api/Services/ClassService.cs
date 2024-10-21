@@ -52,7 +52,7 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper) : IClassService
         return classEntities;
     }
 
-    public async Task<ClassDTO?> CreateClassAsync(string userId, PostClassDTO postClassDTO)
+  public async Task<GetClassDTO?> AddClassAsync(string userId, PostClassDTO postClassDTO)
     {
         var user = await _dbCtx.Users.FindAsync(userId);
         if (user is null)
@@ -72,10 +72,8 @@ public class ClassService(AppDbContext dbCtx, IMapper mapper) : IClassService
         await _dbCtx.Classes.AddAsync(classEntity);
         await _dbCtx.SaveChangesAsync();
 
-        // Create the response DTO
-        var getClassDTO = _mapper.Map<ClassDTO>(classEntity);
-
-        return getClassDTO;
+    var classDTO = _mapper.Map<GetClassDTO>(classEntity);
+    return classDTO;
     }
 
     public async Task<bool> DeleteClassAsync(string userId, int id)

@@ -1,12 +1,12 @@
 using TeacherTimetabler.Api.DTOs;
 
-namespace TeacherTimetabler.Api.Interfaces;
+namespace TeacherTimetabler.Api.Services;
 
 public interface IClassService
 {
-    Task<ClassDTO?> GetClassByIdAsync(string userId, int classId);
-    Task<ClassDTO?> GetClassByNameAsync(string userId, string name);
-    Task<IEnumerable<ClassDTO>> GetClassesAsync(string userId);
-    Task<ClassDTO?> CreateClassAsync(string userId, PostClassDTO postClassDTO);
-    Task<bool> DeleteClassAsync(string user, int classId);
+  Task<GetClassDTO?> GetClassByIdAsync(string userId, int classId);
+  Task<GetClassDTO?> GetClassByNameAsync(string userId, string name);
+  Task<IEnumerable<GetClassDTO>> GetClassesAsync(string userId);
+  Task<GetClassDTO?> AddClassAsync(string userId, PostClassDTO postClassDTO);
+  Task<bool> DeleteClassAsync(string user, int classId);
 }

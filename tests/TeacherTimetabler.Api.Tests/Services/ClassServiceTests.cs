@@ -29,7 +29,7 @@ public class ClassServiceTests
 
             // Act
             var result = await _classService.GetClassByIdAsync(testUser.Id, classId);
-            var testClassDTO = _mapper.Map<ClassDTO>(result);
+      var testClassDTO = _mapper.Map<GetClassDTO>(result);
 
             // Assert
             if (isValid)

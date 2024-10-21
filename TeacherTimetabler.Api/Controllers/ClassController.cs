@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeacherTimetabler.Api.DTOs;
-using TeacherTimetabler.Api.Interfaces;
+using TeacherTimetabler.Api.Services;
 
 namespace TeacherTimetabler.Api.Controllers;
 
@@ -14,7 +14,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
 
     // GET /api/classes
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ClassDTO>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(IEnumerable<GetClassDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize]
@@ -27,13 +27,13 @@ public class ClassController(IClassService classService, ITeacherService userSer
             return BadRequest(new { Error = "User not found" });
         }
 
-        IEnumerable<ClassDTO> result = await _classService.GetClassesAsync(user.Id);
+    IEnumerable<GetClassDTO> result = await _classService.GetClassesAsync(user.Id);
         return Ok(result);
     }
 
     // GET /api/classes/{id}
     [HttpGet("{classId:int}")]
-    [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize]
@@ -57,7 +57,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
 
     // POST /api/classes
     [HttpPost]
-    [ProducesResponseType(typeof(ClassDTO), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Authorize]
     public async Task<IActionResult> PostClass(PostClassDTO postClassDTO)
@@ -74,7 +74,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
             return BadRequest(new { Error = "User not found" });
         }
 
-        ClassDTO? classDTO = await _classService.CreateClassAsync(user.Id, postClassDTO);
+    GetClassDTO? classDTO = await _classService.AddClassAsync(user.Id, postClassDTO);
 
         if (classDTO is null)
         {
