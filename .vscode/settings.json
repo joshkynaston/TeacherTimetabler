@@ -22,5 +22,6 @@
     "editor.fontFamily": "'FiraCode Nerd Font', 'monospace', monospace",
     "debug.console.fontSize": 10,
     "terminal.integrated.fontSize": 10,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.codeLens": false
 }
