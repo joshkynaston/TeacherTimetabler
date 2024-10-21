@@ -1,13 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TeacherTimetabler.Api.Models;
 
 public class RecurringItem : IOwnedByTeacher
 {
   // Implement IOwnedEntity
+  [Key]
+  public int EntityId { get; set; }
   public required string TeacherId { get; set; }
   public required Teacher Teacher { get; set; }
 
   // Properties
-  public int Id { get; set; } // PK
   public string? WeekType { get; set; } // Week A/B 1/2 for biweekly timetables
   public required DayOfWeek DayOfWeek { get; set; }
   public required string ActivityType { get; set; } // e.g. Lesson, Planning, PPA, Lunch

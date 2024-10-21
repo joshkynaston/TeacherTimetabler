@@ -1,12 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TeacherTimetabler.Api.Models;
 
 public class Timeslot : IOwnedByTeacher
 {
   // Implement IOwnedEntity
+  [Key]
+  public int EntityId { get; set; }
   public required string TeacherId { get; set; }
   public required Teacher Teacher { get; set; }
 
-  public int Id { get; set; } // PK
   public required string Name { get; set; } // "Period 1", "Break", etc.
   public TimeSpan StartTime { get; set; }
   public TimeSpan EndTime { get; set; }
