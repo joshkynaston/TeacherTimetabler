@@ -8,9 +8,6 @@ namespace TeacherTimetabler.Api.Security;
 public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwnershipHandler> logger)
   : AuthorizationHandler<ResourceOwnershipRequirement>
 {
-  private readonly AppDbContext _dbCtx = dbCtx;
-  private readonly ILogger<ResourceOwnershipHandler> _logger = logger;
-
   protected override async Task HandleRequirementAsync(
     AuthorizationHandlerContext context,
     ResourceOwnershipRequirement requirement
@@ -20,7 +17,7 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
     var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     if (userId == null)
     {
-      _logger.LogError("User ID is null, failing authorization.");
+      logger.LogError("User ID is null, failing authorization.");
       context.Fail();
       return;
     }
@@ -29,31 +26,29 @@ public class ResourceOwnershipHandler(AppDbContext dbCtx, ILogger<ResourceOwners
     if (context.Resource is HttpContext httpContext)
     {
       var routeData = httpContext.GetRouteData();
-
       var entityId = int.TryParse(routeData?.Values["id"]?.ToString(), out var id) ? id : (int?)null;
-
       if (entityId == null)
       {
-        _logger.LogError("Entity ID is null, failing authorization.");
+        logger.LogError("Entity ID is null, failing authorization.");
         context.Fail();
         return;
       }
 
       // Check if the entity exists and is owned by the current user
-      var resource = await _dbCtx.Classes.FirstOrDefaultAsync(c => c.EntityId == entityId);
+      var resource = await dbCtx.Classes.FirstOrDefaultAsync(c => c.Id == entityId);
       if (resource == null || resource.TeacherId != userId)
       {
-        _logger.LogError("Class not found or not owned by user {userId}, failing authorization.", userId);
+        logger.LogError("Class not found or not owned by user {userId}, failing authorization.", userId);
         context.Fail();
         return;
       }
 
-      _logger.LogInformation("User {userId} is authorized to access class {entityId}.", userId, entityId);
+      logger.LogInformation("User {userId} is authorized to access class {entityId}.", userId, entityId);
       context.Succeed(requirement);
     }
     else
     {
-      _logger.LogError("Resource is not of type HttpContext, failing authorization.");
+      logger.LogError("Resource is not of type HttpContext, failing authorization.");
       context.Fail();
     }
   }

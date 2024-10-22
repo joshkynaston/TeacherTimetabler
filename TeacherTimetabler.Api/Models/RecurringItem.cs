@@ -1,15 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TeacherTimetabler.Api.Models;
 
-public class RecurringItem : IOwnedByTeacher
+public class RecurringItem : OwnedEntity
 {
-  // Implement IOwnedEntity
-  [Key]
-  public int EntityId { get; set; }
-  public required string TeacherId { get; set; }
-  public required Teacher Teacher { get; set; }
-
   // Properties
   public string? WeekType { get; set; } // Week A/B 1/2 for biweekly timetables
   public required DayOfWeek DayOfWeek { get; set; }

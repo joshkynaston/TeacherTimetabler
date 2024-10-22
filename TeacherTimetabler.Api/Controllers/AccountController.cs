@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TeacherTimetabler.Api.DTOs;
 using TeacherTimetabler.Api.Models;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace TeacherTimetabler.Api.Controllers;
 
@@ -15,94 +16,71 @@ public class AccountController(UserManager<Teacher> userManager, SignInManager<T
   private readonly SignInManager<Teacher> _signInManager = signInManager;
 
   [HttpPost("register")]
-  public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+  public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
   {
     if (!ModelState.IsValid)
-    {
       return BadRequest(ModelState);
-    }
 
     var user = new Teacher
     {
-      UserName = registerDTO.Email,
-      Email = registerDTO.Email,
-      FirstName = registerDTO.FirstName,
-      LastName = registerDTO.LastName,
+      UserName = registerDto.Email,
+      Email = registerDto.Email,
+      FirstName = registerDto.FirstName,
+      LastName = registerDto.LastName,
     };
 
-    var result = await _userManager.CreateAsync(user, registerDTO.Password);
+    IdentityResult? result = await _userManager.CreateAsync(user, registerDto.Password);
 
     if (!result.Succeeded)
     {
-      foreach (var error in result.Errors)
-      {
+      foreach (IdentityError? error in result.Errors)
         ModelState.AddModelError(string.Empty, error.Description);
-      }
       return BadRequest(ModelState);
     }
 
-    await _signInManager.SignInAsync(user, isPersistent: false);
+    await _signInManager.SignInAsync(user, false);
 
     return Ok(new { message = "User created successfully" });
   }
 
   [HttpPost("login")]
-  public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+  public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
   {
     if (!ModelState.IsValid)
-    {
       return BadRequest(ModelState);
-    }
 
-    var result = await _signInManager.PasswordSignInAsync(
-      loginDTO.Email,
-      loginDTO.Password,
-      isPersistent: false,
-      lockoutOnFailure: false
-    );
+    SignInResult? result = await _signInManager.PasswordSignInAsync(loginDto.Email, loginDto.Password, false, false);
 
     if (result.Succeeded)
-    {
       return Ok(new { message = "User logged in successfully" });
-    }
 
     return Unauthorized(new { Error = "Unsuccessful login attempt" });
   }
 
   [HttpPatch("config")]
   [Authorize]
-  public async Task<IActionResult> Config([FromBody] TeacherConfigDTO configDTO)
+  public async Task<IActionResult> Config([FromBody] TeacherConfigDto configDto)
   {
     Teacher? teacher = await _userManager.GetUserAsync(User);
-    string? firstName = configDTO.FirstName;
-    string? lastName = configDTO.LastName;
+    string? firstName = configDto.FirstName;
+    string? lastName = configDto.LastName;
 
     if (teacher == null)
-    {
       return Unauthorized(new { Error = "User not found" });
-    }
 
     if (!string.IsNullOrEmpty(firstName))
-    {
       teacher.FirstName = firstName;
-    }
 
     if (!string.IsNullOrEmpty(lastName))
-    {
       teacher.LastName = lastName;
-    }
 
-    teacher.TimetableIsBiweekly = configDTO.TimetableIsBiweekly;
+    teacher.TimetableIsBiweekly = configDto.TimetableIsBiweekly;
 
-    IdentityResult result = await _userManager.UpdateAsync(teacher);
+    IdentityResult? result = await _userManager.UpdateAsync(teacher);
 
     if (result.Succeeded)
-    {
       return Ok(new { message = "Account configuration updated" });
-    }
     else
-    {
       return BadRequest(new { Error = "Failed to update account configuration" });
-    }
   }
 }

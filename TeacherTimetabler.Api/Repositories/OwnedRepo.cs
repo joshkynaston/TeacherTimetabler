@@ -5,10 +5,10 @@ using TeacherTimetabler.Api.Models;
 namespace TeacherTimetabler.Api.Repositories;
 
 public class OwnedRepo<T> : IOwnedRepo<T>
-  where T : class, IOwnedByTeacher
+  where T : OwnedEntity
 {
-  protected readonly AppDbContext _context;
-  protected readonly DbSet<T> _dbSet;
+  private readonly AppDbContext _context;
+  private readonly DbSet<T> _dbSet;
 
   public OwnedRepo(AppDbContext context)
   {
@@ -26,14 +26,14 @@ public class OwnedRepo<T> : IOwnedRepo<T>
     _dbSet.Remove(entity);
   }
 
-  public async Task<IEnumerable<T>> GetAllAsync(string userId)
+  public async Task<IEnumerable<T>> GetAllAsync(string teacherId)
   {
-    return await _dbSet.Where(c => c.TeacherId == userId).ToListAsync();
+    return await _dbSet.Where(c => c.TeacherId == teacherId).ToListAsync();
   }
 
-  public async Task<T?> GetAsync(string userId, int entityId)
+  public async Task<T?> GetAsync(string teacherId, int entityId)
   {
-    return await _dbSet.FirstOrDefaultAsync(c => c.TeacherId == userId && c.EntityId == entityId);
+    return await _dbSet.FirstOrDefaultAsync(c => c.TeacherId == teacherId && c.Id == entityId);
   }
 
   public void Update(T entity)

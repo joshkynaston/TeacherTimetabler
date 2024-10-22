@@ -7,45 +7,40 @@ namespace TeacherTimetabler.Api.Services;
 
 public class ClassService(IOwnedRepo<Class> classRepository, IMapper mapper) : IClassService
 {
-  private readonly IOwnedRepo<Class> _classRepository = classRepository;
-  private readonly IMapper _mapper = mapper;
-
-  public async Task<GetClassDTO?> GetClassAsync(string teacherId, int classId)
+  public async Task<GetClassDto?> GetClassAsync(string teacherId, int classId)
   {
-    Class? classEntity = await _classRepository.GetAsync(teacherId, classId);
-    return classEntity is not null ? _mapper.Map<GetClassDTO>(classEntity) : null;
+    Class? classEntity = await classRepository.GetAsync(teacherId, classId);
+    return classEntity is not null ? mapper.Map<GetClassDto>(classEntity) : null;
   }
 
-  public async Task<GetClassDTO?> AddClassAsync(string teacherId, PostClassDTO postClassDTO)
+  public async Task<GetClassDto?> AddClassAsync(string teacherId, PostClassDto postClassDto)
   {
-    var classEntity = _mapper.Map<Class>(postClassDTO);
+    var classEntity = mapper.Map<Class>(postClassDto);
     classEntity.TeacherId = teacherId;
 
-    await _classRepository.AddAsync(classEntity);
-    await _classRepository.SaveChangesAsync();
+    await classRepository.AddAsync(classEntity);
+    await classRepository.SaveChangesAsync();
 
-    return _mapper.Map<GetClassDTO>(classEntity);
+    return mapper.Map<GetClassDto>(classEntity);
   }
 
   public async Task<bool> DeleteClassAsync(string teacherId, int classId)
   {
-    Class? classEntity = await _classRepository.GetAsync(teacherId, classId);
+    Class? classEntity = await classRepository.GetAsync(teacherId, classId);
 
     if (classEntity is null)
-    {
       return false;
-    }
 
-    _classRepository.Delete(classEntity);
-    await _classRepository.SaveChangesAsync();
+    classRepository.Delete(classEntity);
+    await classRepository.SaveChangesAsync();
 
     return true;
   }
 
-  public async Task<IEnumerable<GetClassDTO>> GetClassesAsync(string teacherId)
+  public async Task<IEnumerable<GetClassDto>> GetClassesAsync(string teacherId)
   {
-    IEnumerable<Class> classEntities = await _classRepository.GetAllAsync(teacherId);
-    List<GetClassDTO> classDTOs = classEntities.Select(_mapper.Map<GetClassDTO>).ToList();
-    return classDTOs;
+    IEnumerable<Class> classEntities = await classRepository.GetAllAsync(teacherId);
+    List<GetClassDto> classDtOs = classEntities.Select(mapper.Map<GetClassDto>).ToList();
+    return classDtOs;
   }
 }

@@ -1,14 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TeacherTimetabler.Api.Models;
 
-public class Class : IOwnedByTeacher
+public class Class : OwnedEntity
 {
-  [Key]
-  public int EntityId { get; set; }
-  public required string TeacherId { get; set; }
-  public required Teacher Teacher { get; set; }
-
+  // Properties
   public required string ClassName { get; set; }
   public string? Subject { get; set; }
 }

@@ -5,13 +5,14 @@ namespace TeacherTimetabler.Api.Models;
 
 public class Teacher : IdentityUser
 {
-  [Required]
+  // Properties
+  [MaxLength(40)]
   public required string FirstName { get; set; }
 
-  [Required]
+  [MaxLength(40)]
   public required string LastName { get; set; }
-
   public bool TimetableIsBiweekly { get; set; }
 
+  // Navigation properties
   public ICollection<Timetable>? Timetables { get; set; }
 }

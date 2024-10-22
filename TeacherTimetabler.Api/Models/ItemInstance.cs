@@ -1,15 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TeacherTimetabler.Api.Models;
 
-public class ItemInstance : IOwnedByTeacher
+public class ItemInstance : OwnedEntity
 {
-  // Implement IOwnedEntity
-  [Key]
-  public int EntityId { get; set; }
-  public required string TeacherId { get; set; }
-  public required Teacher Teacher { get; set; }
-
   // Properties
   public required string ActivityType { get; set; }
   public string? Title { get; set; }

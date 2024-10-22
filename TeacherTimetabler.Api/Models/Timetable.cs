@@ -1,15 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TeacherTimetabler.Api.Models;
 
-public class Timetable : IOwnedByTeacher
+public class Timetable : OwnedEntity
 {
-  // Implement IOwnedEntity
-  [Key]
-  public int EntityId { get; set; }
-  public required string TeacherId { get; set; }
-  public required Teacher Teacher { get; set; }
-
+  // Properties
   public required string AcademicYear { get; set; }
   public bool IsBiWeekly { get; set; }
 

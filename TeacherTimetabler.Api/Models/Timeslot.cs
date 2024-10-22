@@ -2,19 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TeacherTimetabler.Api.Models;
 
-public class Timeslot : IOwnedByTeacher
+public class Timeslot : OwnedEntity
 {
-  // Implement IOwnedEntity
-  [Key]
-  public int EntityId { get; set; }
-  public required string TeacherId { get; set; }
-  public required Teacher Teacher { get; set; }
-
-  public required string Name { get; set; } // "Period 1", "Break", etc.
-  public TimeSpan StartTime { get; set; }
-  public TimeSpan EndTime { get; set; }
+  [MaxLength(50)]
+  public required string Name { get; init; } // "Period 1", "Break", etc.
+  public TimeSpan StartTime { get; init; }
+  public TimeSpan EndTime { get; init; }
 
   // Foreign keys
-  public int TimetableId { get; set; }
-  public required Timetable Timetable { get; set; }
+  public int TimetableId { get; init; }
+  public required Timetable Timetable { get; init; }
 }

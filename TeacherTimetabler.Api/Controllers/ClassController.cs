@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeacherTimetabler.Api.DTOs;
+using TeacherTimetabler.Api.Models;
 using TeacherTimetabler.Api.Services;
 
 namespace TeacherTimetabler.Api.Controllers;
@@ -9,81 +10,64 @@ namespace TeacherTimetabler.Api.Controllers;
 [Route("api/classes")]
 public class ClassController(IClassService classService, ITeacherService userService) : ControllerBase
 {
-  private readonly IClassService _classService = classService;
-  private readonly ITeacherService _userService = userService;
-
   // GET /api/classes
   [HttpGet]
-  [ProducesResponseType(typeof(IEnumerable<GetClassDTO>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(IEnumerable<GetClassDto>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status403Forbidden)]
   [Authorize]
   public async Task<IActionResult> GetClasses()
   {
-    var user = await _userService.GetCurrentUserAsync();
+    Teacher? user = await userService.GetCurrentUserAsync();
 
     if (user is null)
-    {
       return BadRequest(new { Error = "User not found" });
-    }
 
-    IEnumerable<GetClassDTO> result = await _classService.GetClassesAsync(user.Id);
+    IEnumerable<GetClassDto> result = await classService.GetClassesAsync(user.Id);
     return Ok(result);
   }
 
   // GET /api/classes/{classId}
   [HttpGet("{classId:int}")]
-  [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(GetClassDto), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [Authorize]
   public async Task<IActionResult> GetClass([FromRoute] int classId)
   {
-    var user = await _userService.GetCurrentUserAsync();
+    Teacher? user = await userService.GetCurrentUserAsync();
 
     if (user is null)
-    {
       return BadRequest(new { Error = "User not found" });
-    }
 
-    var classDTO = await _classService.GetClassAsync(user.Id, classId);
-    if (classDTO is null)
-    {
+    GetClassDto? classDto = await classService.GetClassAsync(user.Id, classId);
+    if (classDto is null)
       return NotFound($"Class with id {classId} not found");
-    }
 
-    return Ok(classDTO);
+    return Ok(classDto);
   }
 
   // POST /api/classes
   [HttpPost]
-  [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(GetClassDto), StatusCodes.Status201Created)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   [Authorize]
-  public async Task<IActionResult> PostClass(PostClassDTO postClassDTO)
+  public async Task<IActionResult> PostClass(PostClassDto postClassDto)
   {
     if (!ModelState.IsValid)
-    {
       return BadRequest(new { Error = "Invalid or incomplete class data" });
-    }
 
-    var user = await _userService.GetCurrentUserAsync();
+    Teacher? user = await userService.GetCurrentUserAsync();
 
     if (user is null)
-    {
       return BadRequest(new { Error = "User not found" });
-    }
 
-    GetClassDTO? classDTO = await _classService.AddClassAsync(user.Id, postClassDTO);
+    GetClassDto? classDto = await classService.AddClassAsync(user.Id, postClassDto);
 
-    if (classDTO is null)
-    {
+    if (classDto is null)
       return BadRequest(new { Error = "Failed to create class." });
-    }
-    else
-    {
-      return Created($"/api/classes/{classDTO.Id}", classDTO);
-    }
+
+    return Created($"/api/classes/{classDto.ClassId}", classDto);
   }
 
   // DELETE /api/classes/{classId}
@@ -91,21 +75,15 @@ public class ClassController(IClassService classService, ITeacherService userSer
   [Authorize]
   public async Task<IActionResult> DeleteClassById([FromRoute] int classId)
   {
-    var user = await _userService.GetCurrentUserAsync();
+    Teacher? user = await userService.GetCurrentUserAsync();
 
     if (user is null)
-    {
       return BadRequest(new { Error = "User not found" });
-    }
 
-    bool wasDeleted = await _classService.DeleteClassAsync(user.Id, classId);
+    bool wasDeleted = await classService.DeleteClassAsync(user.Id, classId);
     if (!wasDeleted)
-    {
       return NotFound(new { Error = $"Class with id {classId} not found" });
-    }
     else
-    {
       return NoContent();
-    }
   }
 }

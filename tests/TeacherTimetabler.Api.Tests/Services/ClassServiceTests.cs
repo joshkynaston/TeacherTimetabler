@@ -2,11 +2,11 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoMapper;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using TeacherTimetabler.Api.Data;
+using Moq;
 using TeacherTimetabler.Api.DTOs;
 using TeacherTimetabler.Api.Mappings;
 using TeacherTimetabler.Api.Models;
+using TeacherTimetabler.Api.Repositories;
 using TeacherTimetabler.Api.Services;
 
 namespace TeacherTimetabler.Api.Tests.Services;
@@ -18,24 +18,21 @@ public class ClassServiceTests
     [Theory]
     [InlineData(1, true)]
     [InlineData(2, false)]
-    public async Task GetClassForUserIdByAsync_ShouldValidateClassId(int classId, bool isValid)
+    public async Task GetClassAsync_ShouldValidateClassId(int classId, bool isValid)
     {
       // Arrange
-      var (testUser, testClass) = CreatePairedTestUserAndClass(classId: 1);
+      (Teacher testTeacher, Class testClass) = CreatePairedTestUserAndClass(1);
 
-      _context.Users.Add(testUser);
-      _context.Classes.Add(testClass);
-      _context.SaveChanges();
+      _mockClassRepository.Setup(r => r.GetAsync(testTeacher.Id, classId)).ReturnsAsync(isValid ? testClass : null);
 
       // Act
-      var result = await _classService.GetClassByIdAsync(testUser.Id, classId);
-      var testClassDTO = _mapper.Map<GetClassDTO>(result);
+      GetClassDto? result = await _classService.GetClassAsync(testTeacher.Id, classId);
 
       // Assert
       if (isValid)
       {
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(testClassDTO);
+        result.Should().BeEquivalentTo(_mapper.Map<GetClassDto>(testClass));
       }
       else
       {
@@ -47,9 +44,9 @@ public class ClassServiceTests
   public abstract class ClassServiceTestsBase
   {
     protected readonly IFixture _fixture;
-    protected readonly AppDbContext _context;
+    protected readonly Mock<IOwnedRepo<Class>> _mockClassRepository;
     protected readonly IMapper _mapper;
-    protected readonly ClassService _classService;
+    protected readonly IClassService _classService;
 
     protected ClassServiceTestsBase()
     {
@@ -57,26 +54,29 @@ public class ClassServiceTests
       _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
       _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-      _context = new(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: "TestDb").Options);
-      _context.Database.EnsureDeleted();
+      // Mock the repository
+      _mockClassRepository = _fixture.Freeze<Mock<IOwnedRepo<Class>>>();
 
+      // Create the mapper
       _mapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile())).CreateMapper();
 
-      _classService = new(_context, _mapper);
+      // Create the service with the mocked repository
+      _classService = new ClassService(_mockClassRepository.Object, _mapper);
     }
 
-    protected (Teacher, Class) CreatePairedTestUserAndClass(int classId = 1)
+    protected (Teacher, Class) CreatePairedTestUserAndClass(int classId = 1, string className = "testClass")
     {
-      var testUser = _fixture.Build<Teacher>().Create();
+      Teacher? testTeacher = _fixture.Build<Teacher>().Create();
 
-      var testClass = _fixture
+      Class? testClass = _fixture
         .Build<Class>()
         .With(c => c.Id, classId)
-        .With(c => c.TeacherId, testUser.Id)
-        .With(c => c.Teacher, testUser)
+        .With(c => c.TeacherId, testTeacher.Id)
+        .With(c => c.Teacher, testTeacher)
+        .With(c => c.ClassName, className)
         .Create();
 
-      return (testUser, testClass);
+      return (testTeacher, testClass);
     }
   }
 }
