@@ -12,7 +12,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
 {
   // GET /api/classes
   [HttpGet]
-  [ProducesResponseType(typeof(IEnumerable<GetClassDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(IEnumerable<GetClassDTO>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status401Unauthorized)]
   [ProducesResponseType(StatusCodes.Status403Forbidden)]
   [Authorize]
@@ -23,13 +23,13 @@ public class ClassController(IClassService classService, ITeacherService userSer
     if (user is null)
       return BadRequest(new { Error = "User not found" });
 
-    IEnumerable<GetClassDto> result = await classService.GetClassesAsync(user.Id);
+    IEnumerable<GetClassDTO> result = await classService.GetClassesAsync(user.Id);
     return Ok(result);
   }
 
   // GET /api/classes/{classId}
   [HttpGet("{classId:int}")]
-  [ProducesResponseType(typeof(GetClassDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [Authorize]
@@ -40,7 +40,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
     if (user is null)
       return BadRequest(new { Error = "User not found" });
 
-    GetClassDto? classDto = await classService.GetClassAsync(user.Id, classId);
+    GetClassDTO? classDto = await classService.GetClassAsync(user.Id, classId);
     if (classDto is null)
       return NotFound($"Class with id {classId} not found");
 
@@ -49,7 +49,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
 
   // POST /api/classes
   [HttpPost]
-  [ProducesResponseType(typeof(GetClassDto), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(GetClassDTO), StatusCodes.Status201Created)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   [Authorize]
   public async Task<IActionResult> PostClass(PostClassDto postClassDto)
@@ -62,7 +62,7 @@ public class ClassController(IClassService classService, ITeacherService userSer
     if (user is null)
       return BadRequest(new { Error = "User not found" });
 
-    GetClassDto? classDto = await classService.AddClassAsync(user.Id, postClassDto);
+    GetClassDTO? classDto = await classService.AddClassAsync(user.Id, postClassDto);
 
     if (classDto is null)
       return BadRequest(new { Error = "Failed to create class." });

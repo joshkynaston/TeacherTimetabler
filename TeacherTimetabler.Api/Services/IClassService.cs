@@ -4,8 +4,9 @@ namespace TeacherTimetabler.Api.Services;
 
 public interface IClassService
 {
-  Task<GetClassDto?> GetClassAsync(string userId, int classId);
-  Task<IEnumerable<GetClassDto>> GetClassesAsync(string userId);
-  Task<GetClassDto?> AddClassAsync(string userId, PostClassDto postClassDto);
-  Task<bool> DeleteClassAsync(string user, int classId);
+  Task<GetClassDTO?> GetClassAsync(string userId, int classId);
+  Task<IEnumerable<GetClassDTO>> GetClassesAsync(string userId);
+  Task<GetClassDTO?> AddClassAsync(string userId, PostClassDto postClassDto);
+  Task<bool> DeleteClassAsync(string userId, int classId);
+  Task TestFunc<T>(string userId, int entityId);
 }

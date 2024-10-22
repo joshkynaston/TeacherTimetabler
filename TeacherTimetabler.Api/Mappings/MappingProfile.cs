@@ -8,7 +8,12 @@ public class MappingProfile : Profile
 {
   public MappingProfile()
   {
-    CreateMap<Class, GetClassDto>();
+    // GetDTOs
+    CreateMap<Class, GetClassDTO>();
+    CreateMap<Timeslot, GetTimeslotDTO>();
+    CreateMap<Timetable, GetTimetableDTO>();
+    CreateMap<ItemInstance, GetItemInstanceDTO>();
+
     CreateMap<Class, PostClassDto>();
   }
 }

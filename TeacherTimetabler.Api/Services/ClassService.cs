@@ -7,13 +7,13 @@ namespace TeacherTimetabler.Api.Services;
 
 public class ClassService(IOwnedRepo<Class> classRepository, IMapper mapper) : IClassService
 {
-  public async Task<GetClassDto?> GetClassAsync(string teacherId, int classId)
+  public async Task<GetClassDTO?> GetClassAsync(string teacherId, int classId)
   {
     Class? classEntity = await classRepository.GetAsync(teacherId, classId);
-    return classEntity is not null ? mapper.Map<GetClassDto>(classEntity) : null;
+    return classEntity is not null ? mapper.Map<GetClassDTO>(classEntity) : null;
   }
 
-  public async Task<GetClassDto?> AddClassAsync(string teacherId, PostClassDto postClassDto)
+  public async Task<GetClassDTO?> AddClassAsync(string teacherId, PostClassDto postClassDto)
   {
     var classEntity = mapper.Map<Class>(postClassDto);
     classEntity.TeacherId = teacherId;
@@ -21,7 +21,7 @@ public class ClassService(IOwnedRepo<Class> classRepository, IMapper mapper) : I
     await classRepository.AddAsync(classEntity);
     await classRepository.SaveChangesAsync();
 
-    return mapper.Map<GetClassDto>(classEntity);
+    return mapper.Map<GetClassDTO>(classEntity);
   }
 
   public async Task<bool> DeleteClassAsync(string teacherId, int classId)
@@ -37,10 +37,12 @@ public class ClassService(IOwnedRepo<Class> classRepository, IMapper mapper) : I
     return true;
   }
 
-  public async Task<IEnumerable<GetClassDto>> GetClassesAsync(string teacherId)
+  public async Task<IEnumerable<GetClassDTO>> GetClassesAsync(string teacherId)
   {
     IEnumerable<Class> classEntities = await classRepository.GetAllAsync(teacherId);
-    List<GetClassDto> classDtOs = classEntities.Select(mapper.Map<GetClassDto>).ToList();
+    List<GetClassDTO> classDtOs = classEntities.Select(mapper.Map<GetClassDTO>).ToList();
     return classDtOs;
   }
+
+  public async Task TestFunc<T>(string teacherId, int entityId) { }
 }

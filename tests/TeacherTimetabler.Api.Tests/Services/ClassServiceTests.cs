@@ -26,13 +26,13 @@ public class ClassServiceTests
       _mockClassRepository.Setup(r => r.GetAsync(testTeacher.Id, classId)).ReturnsAsync(isValid ? testClass : null);
 
       // Act
-      GetClassDto? result = await _classService.GetClassAsync(testTeacher.Id, classId);
+      GetClassDTO? result = await _classService.GetClassAsync(testTeacher.Id, classId);
 
       // Assert
       if (isValid)
       {
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_mapper.Map<GetClassDto>(testClass));
+        result.Should().BeEquivalentTo(_mapper.Map<GetClassDTO>(testClass));
       }
       else
       {
@@ -73,7 +73,7 @@ public class ClassServiceTests
         .With(c => c.Id, classId)
         .With(c => c.TeacherId, testTeacher.Id)
         .With(c => c.Teacher, testTeacher)
-        .With(c => c.ClassName, className)
+        .With(c => c.Name, className)
         .Create();
 
       return (testTeacher, testClass);
